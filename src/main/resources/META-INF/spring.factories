@@ -1,0 +1,5 @@
+# src/main/resources/META-INF/spring.factories
+# Auto-configuration registration for Spring Boot
+
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.utility.masking.config.MaskingAutoConfiguration
