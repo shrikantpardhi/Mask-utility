@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    OPTIONAL: Users can create this file in their project to override defaults
+    Location: src/main/resources/logback-spring.xml (in user's project)
+    
+    If this file exists in the user's project, it will override the JAR's default configuration.
+-->
+<configuration>
+    
+    <!-- Import the masking converter from the JAR -->
+    <conversionRule conversionWord="maskedMsg" 
+                    converterClass="com.utility.masking.slf4j.SensitiveDataMessageConverter" />
+
+    <!-- User's custom console appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Use %maskedMsg to enable automatic masking -->
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{35} - %maskedMsg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- User's custom file appender with masking -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/my-app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/my-app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <!-- IMPORTANT: Use %maskedMsg instead of %msg for automatic masking -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level - %maskedMsg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Application-specific logger -->
+    <logger name="com.example" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>
+
+<!-- 
+    KEY POINTS FOR USERS:
+    
+    1. ALWAYS include the conversionRule for maskedMsg:
+       <conversionRule conversionWord="maskedMsg" 
+                       converterClass="com.utility.masking.slf4j.SensitiveDataMessageConverter" />
+    
+    2. Use %maskedMsg instead of %msg in your pattern:
+       ✅ Correct: %maskedMsg%n
+       ❌ Wrong:   %msg%n (no automatic masking)
+    
+    3. If you don't create this file, the JAR's default logback-spring.xml will be used automatically.
+-->
