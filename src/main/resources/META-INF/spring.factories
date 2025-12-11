@@ -1,5 +1,10 @@
 # src/main/resources/META-INF/spring.factories
 # Auto-configuration registration for Spring Boot
 
+# Auto-configuration
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.utility.masking.config.MaskingAutoConfiguration
+
+# Application Listeners for early Logback initialization
+org.springframework.context.ApplicationListener=\
+com.utility.masking.config.LogbackInitializer
